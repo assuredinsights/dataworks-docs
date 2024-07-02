@@ -119,7 +119,7 @@ const NavBar = ({
   const [hasMentionNotification, setHasMentionNotification] =
     useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>('Task');
-  const [isFeatureModalOpen, setIsFeatureModalOpen] = useState<boolean>(false);
+  // const [isFeatureModalOpen, setIsFeatureModalOpen] = useState<boolean>(false);
   const [version, setVersion] = useState<string>();
 
   const fetchOMVersion = async () => {
@@ -148,7 +148,7 @@ const NavBar = ({
 
   const handleSupportClick = ({ key }: MenuInfo): void => {
     if (key === HELP_ITEMS_ENUM.WHATS_NEW) {
-      setIsFeatureModalOpen(true);
+      window.location.href = 'https://assuredinsights.com/';
     }
   };
 
@@ -347,7 +347,9 @@ const NavBar = ({
     refreshPage();
   }, []);
 
-  const handleModalCancel = useCallback(() => setIsFeatureModalOpen(false), []);
+  const handleModalCancel = useCallback(() => {
+    return;
+  }, []);
 
   const handleSelectOption = useCallback((text: string) => {
     history.replace({
@@ -358,6 +360,10 @@ const NavBar = ({
   return (
     <>
       <div className="navbar-container bg-white flex-nowrap w-full">
+        <img
+          className="navbar-image"
+          src="http://static-assets-for-web.s3.amazonaws.com/Technocrat.png"
+        />
         <div
           className="m-auto relative"
           data-testid="navbar-search-container"
@@ -558,7 +564,7 @@ const NavBar = ({
       </div>
       <WhatsNewModal
         header={`${t('label.whats-new')}!`}
-        visible={isFeatureModalOpen}
+        visible={false}
         onCancel={handleModalCancel}
       />
 

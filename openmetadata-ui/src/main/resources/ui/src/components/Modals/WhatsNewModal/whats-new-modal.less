@@ -17,6 +17,7 @@
   .ant-modal-body {
     padding-top: 0;
   }
+
   .ant-modal-close-x {
     display: flex;
     align-items: center;
@@ -27,6 +28,7 @@
     vertical-align: middle;
   }
 }
+
 .whats-new-modal-button-container {
   display: inline-flex;
   border-width: 0.0625rem;
@@ -44,6 +46,7 @@
 }
 
 .whats-new-alert-container {
+  display: none;
   position: fixed;
   bottom: -100%;
   right: 30px;
@@ -116,6 +119,7 @@
   position: relative;
   width: auto;
   height: auto;
+
   .slick-dots.slick-dots-bottom {
     .slick-active {
       button {
@@ -124,6 +128,7 @@
         border-radius: 5px;
       }
     }
+
     button {
       background-color: @primary-color;
       opacity: 0.7;
@@ -133,10 +138,12 @@
     }
   }
 }
+
 .ant-modal-body > .ant-row > .whats-new-version-timeline {
   display: flex;
   align-items: baseline;
 }
+
 .log-title {
   .markdown-parser .toastui-editor-contents p:first-child {
     font-size: 16px;

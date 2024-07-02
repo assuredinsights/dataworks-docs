@@ -1,4 +1,3 @@
-/* eslint-disable i18next/no-literal-string */
 /*
  *  Copyright 2023 Collate.
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,8 +13,9 @@
 import { Layout } from 'antd';
 import classNames from 'classnames';
 import { isEmpty } from 'lodash';
-import React, { useCallback, useEffect, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
+import React, { useCallback, useEffect } from 'react';
+// import React, { useCallback, useEffect, useMemo } from 'react';
+// import { useTranslation } from 'react-i18next';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { ROUTES } from '../../constants/constants';
 import { useLimitStore } from '../../context/LimitsProvider/useLimitsStore';
@@ -27,18 +27,18 @@ import applicationRoutesClass from '../../utils/ApplicationRoutesClassBase';
 import Appbar from '../AppBar/Appbar';
 
 import { LimitBanner } from '../common/LimitBanner/LimitBanner';
-import LeftSidebar from '../MyData/LeftSidebar/LeftSidebar.component';
 import applicationsClassBase from '../Settings/Applications/AppDetails/ApplicationsClassBase';
 import './app-container.less';
 
 const AppContainer = () => {
-  const { i18n } = useTranslation();
-  const { Header, Sider, Content } = Layout;
+  // const { i18n } = useTranslation();
+  // const { Header, Sider, Content } = Layout;
+  const { Header, Content } = Layout;
   const { currentUser } = useApplicationStore();
   const { fetchDomainList } = useDomainStore();
   const AuthenticatedRouter = applicationRoutesClass.getRouteElements();
   const ApplicationExtras = applicationsClassBase.getApplicationExtension();
-  const isDirectionRTL = useMemo(() => i18n.dir() === 'rtl', [i18n]);
+  // const isDirectionRTL = useMemo(() => i18n.dir() === 'rtl', [i18n]);
   const { setConfig, bannerDetails } = useLimitStore();
 
   const fetchLimitConfig = useCallback(async () => {
@@ -61,13 +61,13 @@ const AppContainer = () => {
         className={classNames('app-container', {
           ['extra-banner']: Boolean(bannerDetails),
         })}>
-        <Sider
-          className={classNames('left-sidebar-col', {
-            'left-sidebar-col-rtl': isDirectionRTL,
-          })}
-          width={60}>
-          <LeftSidebar />
-        </Sider>
+        {/* <Sider */}
+        {/*   className={classNames('left-sidebar-col', { */}
+        {/*     'left-sidebar-col-rtl': isDirectionRTL, */}
+        {/*   })} */}
+        {/*   width={60}> */}
+        {/*   <LeftSidebar /> */}
+        {/* </Sider> */}
         <Layout>
           <Header className="p-x-0">
             <Appbar />
