@@ -1,4 +1,4 @@
-name: Labeler
+{# name: Labeler
 
 on:
   pull_request_target:
@@ -35,4 +35,4 @@ jobs:
               with:
                   repo-token: ${{ secrets.GITHUB_TOKEN }}
                   configuration-path: .github/e2eLabeler.yml
-                  sync-labels: true
+                  sync-labels: true #}

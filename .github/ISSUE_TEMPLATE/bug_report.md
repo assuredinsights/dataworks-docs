@@ -1,4 +1,4 @@
----
+<!-- ---
 name: Bug report
 about: Create a report to help us improve
 title: ''
@@ -26,4 +26,4 @@ A clear and concise description of what you expected to happen.
  - OpenMetadata Ingestion package version: [e.g. `openmetadata-ingestion[docker]==XYZ`]
 
 **Additional context**
-Add any other context about the problem here.
+Add any other context about the problem here. -->

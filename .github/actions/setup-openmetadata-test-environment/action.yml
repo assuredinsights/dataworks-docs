@@ -1,4 +1,4 @@
-name: Setup OpenMetadata Test Environment
+{# name: Setup OpenMetadata Test Environment
 description: Steps needed to have a coherent test environment
 
 inputs:
@@ -63,4 +63,4 @@ runs:
         timeout_minutes: 60
         max_attempts: 2
         retry_on: error
-        command: ./docker/run_local_docker.sh ${{ inputs.args }}
+        command: ./docker/run_local_docker.sh ${{ inputs.args }} #}

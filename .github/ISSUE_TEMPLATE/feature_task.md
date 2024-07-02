@@ -1,4 +1,4 @@
----
+<!-- ---
 name: Feature task
 about: Create a Feature based on an issue
 title: ''
@@ -10,4 +10,4 @@ assignees: ''
 Add feature issue reference
 
 **Describe the task**
-A clear and concise description of what the bug is.
+A clear and concise description of what the bug is. -->

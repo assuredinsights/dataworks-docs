@@ -1,4 +1,4 @@
-name: SonarCloud + Jest Coverage
+{# name: SonarCloud + Jest Coverage
 
 on:
   # Trigger analysis when pushing in master or pull requests, and when creating
@@ -135,4 +135,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.UI_SONAR_TOKEN }}
-          SONARCLOUD_URL: https://sonarcloud.io
+          SONARCLOUD_URL: https://sonarcloud.io #}

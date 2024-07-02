@@ -1,4 +1,4 @@
-name: Notion Sync
+{# name: Notion Sync
 
 on:
   workflow_dispatch:
@@ -26,4 +26,4 @@ jobs:
         uses: tryfabric/notion-github-action@v1
         with:
           notion-token: ${{ secrets.NOTION_TOKEN }}
-          notion-db: ${{ secrets.NOTION_DATABASE }}
+          notion-db: ${{ secrets.NOTION_DATABASE }} #}

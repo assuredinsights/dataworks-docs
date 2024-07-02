@@ -1,4 +1,4 @@
-on:
+{# on:
   pull_request_target:
 
 permissions:
@@ -36,4 +36,4 @@ jobs:
             The OpenMetadata team will review the PR shortly! Once it has been labeled as `safe to test`, the CI workflows
             will start executing and we'll be able to make sure everything is working as expected.
             
-            Let us know if you need any help!
+            Let us know if you need any help! #}
