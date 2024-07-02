@@ -8,7 +8,13 @@ WORKDIR /tmp
 RUN git clone https://github.com/assuredinsights/dataworks-docs.git
 
 WORKDIR /tmp/dataworks-docs
-RUN npm install && npm run build
+
+# Remove yarn dependency
+RUN sed -i 's/"preinstall": "yarn global add node-gyp"//' package.json
+
+RUN npm install
+RUN npm install -g node-gyp
+RUN npm run build
 
 RUN rm -rf /opt/openmetadata/webapp/*
 RUN cp -R /tmp/dataworks-docs/build/* /opt/openmetadata/webapp/
