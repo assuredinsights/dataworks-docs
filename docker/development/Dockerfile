@@ -1,7 +1,7 @@
 FROM maven:3.8-openjdk-17 AS build
 WORKDIR /app
 COPY . .
-RUN mvn clean install -DskipTests
+RUN mvn clean install -DskipTests -X -e
 
 FROM alpine:3.19 AS extract
 COPY --from=build /app/openmetadata-dist/target/openmetadata-*.tar.gz /
