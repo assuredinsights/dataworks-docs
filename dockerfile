@@ -17,7 +17,7 @@ WORKDIR /app
 COPY . .
 
 # Build OpenMetadata Server Application
-RUN mvn clean install -DskipTests -X -e
+RUN mvn clean install -DskipTests -X -e -Dnode.version=v16.13.0 -Dnpm.version=8.1.0
 
 FROM openmetadata/server:latest
 

@@ -18,7 +18,7 @@ WORKDIR /app
 COPY . .
 
 # Build OpenMetadata Server Application
-RUN mvn -DskipTests clean package
+RUN mvn clean install -DskipTests -X -e -Dnode.version=v16.13.0 -Dnpm.version=8.1.0
 
 FROM alpine:3.19 AS extract
 COPY --from=build /app/openmetadata-dist/target/openmetadata-*.tar.gz /
