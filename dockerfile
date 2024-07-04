@@ -1,12 +1,17 @@
 FROM maven:3.8-openjdk-17 AS build
 
 # Install dependencies
-RUN microdnf update && microdnf install -y make curl
+RUN microdnf update && microdnf install -y make curl nodejs npm
 
-# Install ANTLR manually
+# Install Yarn
+RUN npm install -g yarn
+
+# Install ANTLR
 RUN curl -O https://www.antlr.org/download/antlr-4.9.2-complete.jar && \
     mv antlr-4.9.2-complete.jar /usr/local/lib/ && \
-    echo 'alias antlr4="java -jar /usr/local/lib/antlr-4.9.2-complete.jar"' >> ~/.bashrc
+    echo 'alias antlr4="java -Xmx500M -cp /usr/local/lib/antlr-4.9.2-complete.jar org.antlr.v4.Tool"' >> ~/.bashrc && \
+    echo 'export PATH="/usr/local/lib:$PATH"' >> ~/.bashrc && \
+    . ~/.bashrc
 
 WORKDIR /app
 COPY . .
