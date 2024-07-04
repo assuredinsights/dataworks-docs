@@ -9,9 +9,9 @@ RUN npm install -g yarn
 # Install ANTLR
 RUN curl -O https://www.antlr.org/download/antlr-4.9.2-complete.jar && \
     mv antlr-4.9.2-complete.jar /usr/local/lib/ && \
-    echo 'alias antlr4="java -Xmx500M -cp /usr/local/lib/antlr-4.9.2-complete.jar org.antlr.v4.Tool"' >> ~/.bashrc && \
-    echo 'export PATH="/usr/local/lib:$PATH"' >> ~/.bashrc && \
-    . ~/.bashrc
+    echo '#!/bin/sh' > /usr/local/bin/antlr4 && \
+    echo 'java -Xmx500M -cp "/usr/local/lib/antlr-4.9.2-complete.jar:$CLASSPATH" org.antlr.v4.Tool "$@"' >> /usr/local/bin/antlr4 && \
+    chmod +x /usr/local/bin/antlr4
 
 WORKDIR /app
 COPY . .
