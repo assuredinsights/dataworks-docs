@@ -1,9 +1,17 @@
-FROM maven:3.8-openjdk-17 AS build
+FROM ubuntu:latest AS build
+
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    openjdk-17-jdk maven jq make curl
+
+# Install ANTLR CLI
+RUN make install_antlr_cli
+
 WORKDIR /app
 COPY . .
-RUN microdnf update && microdnf install -y antlr4
 
-RUN mvn clean install -DskipTests -X -e
+# Build OpenMetadata Server Application
+RUN mvn -DskipTests clean package
 
 FROM alpine:3.19 AS extract
 COPY --from=build /app/openmetadata-dist/target/openmetadata-*.tar.gz /
