@@ -17,6 +17,9 @@ RUN curl -O https://www.antlr.org/download/antlr-4.9.2-complete.jar && \
 WORKDIR /app
 COPY . .
 
+# Generate necessary files
+RUN mvn generate-sources
+
 # Build OpenMetadata Server Application
 RUN mvn clean install -DskipTests -X -e -Dnode.version=v16.13.0 -Dnpm.version=8.1.0
 
