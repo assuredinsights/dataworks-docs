@@ -88,7 +88,6 @@ import NotificationBox from '../NotificationBox/NotificationBox.component';
 import { UserProfileIcon } from '../Settings/Users/UserProfileIcon/UserProfileIcon.component';
 import './nav-bar.less';
 import { NavBarProps } from './NavBar.interface';
-import popupAlertsCardsClassBase from './PopupAlertClassBase';
 
 const cookieStorage = new CookieStorage();
 
@@ -136,15 +135,15 @@ const NavBar = ({
     }
   };
 
-  const renderAlertCards = useMemo(() => {
-    const cardList = popupAlertsCardsClassBase.alertsCards();
+  // const renderAlertCards = useMemo(() => {
+  //   const cardList = popupAlertsCardsClassBase.alertsCards();
 
-    return cardList.map(({ key, component }) => {
-      const Component = component;
+  //   return cardList.map(({ key, component }) => {
+  //     const Component = component;
 
-      return <Component key={key} />;
-    });
-  }, []);
+  //     return <Component key={key} />;
+  //   });
+  // }, []);
 
   const handleSupportClick = ({ key }: MenuInfo): void => {
     if (key === HELP_ITEMS_ENUM.WHATS_NEW) {
@@ -568,7 +567,7 @@ const NavBar = ({
         onCancel={handleModalCancel}
       />
 
-      {renderAlertCards}
+      {/* {renderAlertCards} */}
     </>
   );
 };
