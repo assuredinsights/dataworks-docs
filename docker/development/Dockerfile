@@ -17,8 +17,12 @@ RUN curl -O https://www.antlr.org/download/antlr-4.9.2-complete.jar && \
 WORKDIR /app
 COPY . .
 
-# Build OpenMetadata Server Application
-RUN mvn clean install -DskipTests -X -e -Dnode.version=v16.13.0 -Dnpm.version=8.1.0
+# Build OpenMetadata Server Application (excluding UI)
+RUN mvn clean install -DskipTests -X -e -Dnode.version=v16.13.0 -Dnpm.version=8.1.0 -pl '!openmetadata-ui'
+
+# Build UI separately
+WORKDIR /app/openmetadata-ui/src/main/resources/ui
+RUN yarn install && yarn build
 
 FROM alpine:3.19 AS extract
 COPY --from=build /app/openmetadata-dist/target/openmetadata-*.tar.gz /
@@ -34,6 +38,7 @@ RUN adduser -D openmetadata && \
     apk add --update --no-cache bash openjdk17-jre
 COPY --chown=openmetadata:openmetadata --from=extract /opt/openmetadata /opt/openmetadata
 COPY --chmod=755 docker/openmetadata-start.sh /
+COPY --from=build /app/openmetadata-ui/src/main/resources/ui/build /opt/openmetadata/openmetadata-ui/src/main/resources/ui/build
 USER openmetadata
 WORKDIR /opt/openmetadata
 ENTRYPOINT ["/bin/bash"]

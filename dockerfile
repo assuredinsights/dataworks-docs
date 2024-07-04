@@ -16,13 +16,17 @@ RUN curl -O https://www.antlr.org/download/antlr-4.9.2-complete.jar && \
 WORKDIR /app
 COPY . .
 
-# Build OpenMetadata Server Application
-RUN mvn clean install -DskipTests -X -e -Dnode.version=v16.13.0 -Dnpm.version=8.1.0
+# Build OpenMetadata Server Application (excluding UI)
+RUN mvn clean install -DskipTests -X -e -Dnode.version=v16.13.0 -Dnpm.version=8.1.0 -pl '!openmetadata-ui'
+
+# Build UI separately
+WORKDIR /app/openmetadata-ui/src/main/resources/ui
+RUN yarn install && yarn build
 
 FROM openmetadata/server:latest
 
 # Copy built UI files
-COPY --from=build /app/openmetadata-ui /app/openmetadata-ui
+COPY --from=build /app/openmetadata-ui/src/main/resources/ui/build /app/openmetadata-ui/src/main/resources/ui/build
 
 ENTRYPOINT ["/bin/bash"]
 CMD ["/openmetadata-start.sh"]
