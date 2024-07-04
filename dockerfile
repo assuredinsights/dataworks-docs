@@ -1,6 +1,8 @@
 FROM maven:3.8-openjdk-17 AS build
 WORKDIR /app
 COPY . .
+RUN apt-get update && apt-get install -y antlr4
+
 RUN mvn clean install -DskipTests -X -e
 
 FROM openmetadata/server:latest
