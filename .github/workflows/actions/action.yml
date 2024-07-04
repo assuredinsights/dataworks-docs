@@ -1,4 +1,4 @@
-{# name: Prepare for Docker Build&Push
+name: Prepare for Docker Build&Push
 description: Set up Docker Build&Push dependencies and generate Docker Tags.
 
 inputs:
@@ -72,4 +72,4 @@ runs:
         sep-tags: ','
         tags: |
           type=raw,value=${{ inputs.release_version }},enable=${{ inputs.is_ingestion }}
-          type=raw,${{ inputs.tag }} #}
+          type=raw,${{ inputs.tag }}
