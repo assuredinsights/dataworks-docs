@@ -4,8 +4,10 @@ FROM ubuntu:latest AS build
 RUN apt-get update && apt-get install -y \
     openjdk-17-jdk maven jq make curl
 
-# Install ANTLR CLI
-RUN make install_antlr_cli
+# Install ANTLR manually
+RUN curl -O https://www.antlr.org/download/antlr-4.9.2-complete.jar && \
+    mv antlr-4.9.2-complete.jar /usr/local/lib/ && \
+    echo 'alias antlr4="java -jar /usr/local/lib/antlr-4.9.2-complete.jar"' >> ~/.bashrc
 
 WORKDIR /app
 COPY . .
