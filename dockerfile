@@ -1,32 +1,27 @@
-FROM maven:3.8-openjdk-17 AS build
+# Build stage
+FROM alpine:3.19 AS build
 
-# Install dependencies
-RUN microdnf update && microdnf install -y make curl nodejs npm
+COPY openmetadata-dist/target/openmetadata-*.tar.gz /
 
-# Install Yarn
-RUN npm install -g yarn
+RUN mkdir -p /opt/openmetadata && \
+    tar zxvf openmetadata-*.tar.gz -C /opt/openmetadata --strip-components 1 && \
+    rm openmetadata-*.tar.gz
 
-# Install ANTLR
-RUN curl -O https://www.antlr.org/download/antlr-4.9.2-complete.jar && \
-    mv antlr-4.9.2-complete.jar /usr/local/lib/ && \
-    echo '#!/bin/sh' > /usr/local/bin/antlr4 && \
-    echo 'java -Xmx500M -cp "/usr/local/lib/antlr-4.9.2-complete.jar:$CLASSPATH" org.antlr.v4.Tool "$@"' >> /usr/local/bin/antlr4 && \
-    chmod +x /usr/local/bin/antlr4
+# Final stage
+FROM alpine:3.19
 
-WORKDIR /app
-COPY . .
+EXPOSE 8585
 
-# Build OpenMetadata Server Application
-RUN mvn clean install -Dmaven.test.skip=true -X -e -Dnode.version=v16.13.0 -Dnpm.version=8.1.0
+RUN adduser -D openmetadata && \
+    apk update && \
+    apk upgrade && \
+    apk add --update --no-cache bash openjdk17-jre
 
-# Rebuild UI separately
-WORKDIR /app/openmetadata-ui/src/main/resources/ui
-RUN yarn install && yarn build
+COPY --chown=openmetadata:openmetadata --from=build /opt/openmetadata /opt/openmetadata
+COPY --chmod=755 docker/openmetadata-start.sh /
 
-FROM openmetadata/server:latest
+USER openmetadata
 
-# Copy built UI files
-COPY --from=build /app/openmetadata-ui/src/main/resources/ui/build /app/openmetadata-ui/src/main/resources/ui/build
-
-ENTRYPOINT ["/bin/bash"]
+WORKDIR /opt/openmetadata
+ENTRYPOINT [ "/bin/bash" ]
 CMD ["/openmetadata-start.sh"]
