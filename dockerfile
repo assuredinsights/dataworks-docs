@@ -44,20 +44,12 @@ RUN mkdir -p /opt/openmetadata && \
     tar zxvf /opt/openmetadata/*.tar.gz -C /opt/openmetadata --strip-components 1 && \
     rm /opt/openmetadata/*.tar.gz
 
-# Add a non-root user and install necessary packages
-RUN adduser -D openmetadata && \
-    apk update && \
-    apk upgrade && \
-    apk add --update --no-cache bash openjdk17-jre
+# Switching user and permission management, if needed, can be handled based on final usage requirements
+USER openmetadata  # If you have a 'openmetadata' user set in base image settings
 
-# Ensure the startup script is executable
-COPY docker/openmetadata-start.sh /openmetadata-start.sh
-RUN chmod 755 /openmetadata-start.sh
-
-# Switch to non-root user
-USER openmetadata
+# Set the working directory
 WORKDIR /opt/openmetadata
 
 # Set entrypoint and command
 ENTRYPOINT ["/bin/bash"]
-CMD ["/openmetadata-start.sh"]
+CMD ["/opt/openmetadata/bin/start.sh"]  # Assuming '/opt/openmetadata/bin/start.sh' is the entry script in your OpenMetadata server image
