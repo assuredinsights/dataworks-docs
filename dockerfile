@@ -36,6 +36,9 @@ FROM openmetadata/server:latest
 # Expose the relevant port
 EXPOSE 8585
 
+# Create a non-root user
+RUN adduser -D openmetadata
+
 # Copy the build output from the build stage
 COPY --from=build /app/openmetadata-dist/target/*.tar.gz /opt/openmetadata/
 
@@ -44,12 +47,15 @@ RUN mkdir -p /opt/openmetadata && \
     tar zxvf /opt/openmetadata/*.tar.gz -C /opt/openmetadata --strip-components 1 && \
     rm /opt/openmetadata/*.tar.gz
 
-# Switching user and permission management, if needed, can be handled based on final usage requirements
-USER openmetadata  # If you have a 'openmetadata' user set in base image settings
+# Change ownership of the /opt/openmetadata directory to the new user
+RUN chown -R openmetadata:openmetadata /opt/openmetadata
+
+# Switch to non-root user
+USER openmetadata
 
 # Set the working directory
 WORKDIR /opt/openmetadata
 
 # Set entrypoint and command
 ENTRYPOINT ["/bin/bash"]
-CMD ["/opt/openmetadata/bin/start.sh"]  # Assuming '/opt/openmetadata/bin/start.sh' is the entry script in your OpenMetadata server image
+CMD ["/opt/openmetadata/bin/start.sh"]  # Adjust to the correct start script if different
