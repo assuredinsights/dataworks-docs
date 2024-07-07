@@ -31,13 +31,19 @@ COPY . .
 RUN mvn clean package -DskipTests
 
 # Stage 2: Create the final Docker image to run OpenMetadata Server
-FROM openmetadata/server:latest
+FROM ubuntu:latest
+
+# Install necessary runtime dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    bash \
+    openjdk-17-jre-headless
 
 # Expose the relevant port
 EXPOSE 8585
 
 # Create a non-root user
-RUN adduser -D openmetadata
+RUN useradd -ms /bin/bash openmetadata
 
 # Copy the build output from the build stage
 COPY --from=build /app/openmetadata-dist/target/*.tar.gz /opt/openmetadata/
@@ -45,10 +51,8 @@ COPY --from=build /app/openmetadata-dist/target/*.tar.gz /opt/openmetadata/
 # Extract the tar.gz file into /opt/openmetadata
 RUN mkdir -p /opt/openmetadata && \
     tar zxvf /opt/openmetadata/*.tar.gz -C /opt/openmetadata --strip-components 1 && \
-    rm /opt/openmetadata/*.tar.gz
-
-# Change ownership of the /opt/openmetadata directory to the new user
-RUN chown -R openmetadata:openmetadata /opt/openmetadata
+    rm /opt/openmetadata/*.tar.gz && \
+    chown -R openmetadata:openmetadata /opt/openmetadata
 
 # Switch to non-root user
 USER openmetadata
@@ -58,4 +62,4 @@ WORKDIR /opt/openmetadata
 
 # Set entrypoint and command
 ENTRYPOINT ["/bin/bash"]
-CMD ["/opt/openmetadata/bin/start.sh"]  # Adjust to the correct start script if different
+CMD ["/opt/openmetadata/bin/start.sh"]
