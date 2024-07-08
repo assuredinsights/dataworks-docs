@@ -54,9 +54,6 @@ RUN mkdir -p /opt/openmetadata && \
     rm /opt/openmetadata/*.tar.gz && \
     chown -R openmetadata:openmetadata /opt/openmetadata
 
-# Ensure the start.sh script has execute permissions
-RUN chmod +x /opt/openmetadata/bin/start.sh
-
 # Switch to non-root user
 USER openmetadata
 
