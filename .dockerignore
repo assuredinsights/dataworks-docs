@@ -3,7 +3,7 @@ node_modules
 
 # Ignore build directories
 dist
-target
+# target
 
 # Ignore configuration files 
 *.env
