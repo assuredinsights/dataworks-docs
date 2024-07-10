@@ -1,34 +1,4 @@
-# name: Build and Push Custom OpenMetadata Image
-
-# on:
-#   push:
-#     branches: [ main ]
-
-# jobs:
-#   build-and-push:
-#     runs-on: ubuntu-latest
-#     steps:
-#     - uses: actions/checkout@v2
-
-#     - name: Set up Docker Buildx
-#       uses: docker/setup-buildx-action@v3
-
-#     - name: Login to Azure Container Registry
-#       uses: azure/docker-login@v1
-#       with:
-#         login-server: dataworksdocs.azurecr.io
-#         username: ${{ secrets.REGISTRY_USERNAME }}
-#         password: ${{ secrets.REGISTRY_PASSWORD }}
-
-#     - name: Build and push
-#       uses: docker/build-push-action@v5
-#       with:
-#         context: .
-#         push: true
-#         tags: dataworksdocs.azurecr.io/dataworks-docs:latest
-
-
-name: Build and Release OpenMetadata
+name: docker-openmetadata-server release app
 
 on:
   workflow_dispatch:
@@ -41,10 +11,10 @@ on:
         type: boolean
 
 jobs:
-  build:
+  maven-build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Set up JDK 17
@@ -64,58 +34,33 @@ jobs:
 
       - name: Build OpenMetadata Server Application
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           mvn -DskipTests clean package
 
-      - name: Verify artifact
-        run: |
-          ls -la /home/runner/work/OpenMetadata/OpenMetadata/openmetadata-dist/target/
 
-      - name: Upload OpenMetadata application to Artifact
+
+
+      - name: Upload OpenMetadata application
         uses: actions/upload-artifact@v4
         with:
-          name: openmetadata-binary
-          path: /home/runner/work/OpenMetadata/OpenMetadata/openmetadata-dist/target/openmetadata*.tar.gz
+          name: openmetadata-dist
+          path: openmetadata-dist/target/*.tar.gz
 
-  release:
-    if: github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Fetch Release Data
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        id: attach_release
-        run: |
-          echo "UPLOAD_URL=$(curl -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $GITHUB_TOKEN" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ inputs.docker_release_tag }}-release | jq .upload_url | tr -d '"' )" >> $GITHUB_OUTPUT
 
-      - name: List artifacts
-        run: |
-          curl -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/actions/artifacts
-
-      - name: Download application from Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: openmetadata-binary
-
-      - name: Upload app to release
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          asset_path: ./openmetadata*.tar.gz
-          upload_url: ${{ steps.attach_release.outputs.UPLOAD_URL }}
-          asset_name: openmetadata-${{ inputs.docker_release_tag }}.tar.gz
-          asset_content_type: application/tar+gzip
 
   push_to_acr:
     runs-on: ubuntu-latest
-    if: ${{ always() && contains(join(needs.*.result, ','), 'success') }}
-    needs: release
+    needs: [maven-build]
     steps:
       - name: Check out the Repo
         uses: actions/checkout@v4
+
+      - name: Download OpenMetadata application
+        uses: actions/download-artifact@v4
+        with:
+          name: openmetadata-dist
+          path: ./openmetadata-dist
 
       - name: Set build arguments
         id: build-args
@@ -134,8 +79,11 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.ACR_LOGIN_SERVER }}/openmetadata/server:${{ inputs.docker_release_tag }},${{ secrets.ACR_LOGIN_SERVER }}/openmetadata/server:latest
+          tags: |
+            ${{ secrets.ACR_LOGIN_SERVER }}/dataworks-docs:${{ inputs.docker_release_tag }}
+            ${{ inputs.push_latest_tag_to_release == 'true' && format('{0}/dataworks-docs:latest', secrets.ACR_LOGIN_SERVER) || '' }}
           file: ./docker/docker-compose-quickstart/Dockerfile
           build-args: |
+            RI_VERSION=${{ inputs.docker_release_tag }}
             BUILD_DATE=${{ steps.build-args.outputs.BUILD_DATE }}
             COMMIT_ID=${{ github.sha }}
